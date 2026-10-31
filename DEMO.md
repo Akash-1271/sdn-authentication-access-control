@@ -4,6 +4,8 @@
 
 The tested application is in `/home/akash/sdn-final-simplified-20261029`, with `.venv311` linked to the working OS-Ken environment. Keep both earlier projects unchanged.
 
+Use **two Ubuntu terminals**: Terminal A runs Mininet, Terminal B runs the controller. Open another terminal tab with Ctrl+Shift+T; switch by clicking its tab. Paste one complete command line at a time. Commands labelled `mininet>` go inside Terminal A's running Mininet prompt, not a normal shell; do not type the prompt itself. For a new checkout, use its project path in both terminals as explained in [SETUP.md](SETUP.md).
+
 ## 1. Prepare once — Ubuntu terminal
 
 ```bash
@@ -53,6 +55,8 @@ At `mininet>`:
 
 ```text
 h1 python3 -B demo_checks.py denied
+h_srv python3 -B demo_checks.py service
+sh ovs-ofctl -O OpenFlow13 dump-flows s1
 h1 python3 -B client.py
 h1 python3 -B demo_checks.py denied
 h_srv python3 -B demo_checks.py service
@@ -68,16 +72,22 @@ The denial probe deliberately prints **INCONCLUSIVE** for a timeout. Combine tha
 At `mininet>`:
 
 ```text
-h1 python3 -B demo_checks.py expiry
+h1 python3 -B demo_checks.py expiry > logs/expiry-demo.log 2>&1 &
+sh cat logs/expiry-demo.log
+sh ovs-ofctl -O OpenFlow13 dump-flows s1
 ```
 
-During its 60-second wait, use **Terminal C**:
+The trailing `&` runs this check in the background, leaving Terminal A available for inspecting flows. Wait until its log reports initial service access and the 62-second wait; if it has not appeared yet, repeat the `cat` command. No third terminal is needed. Do not move to another login scenario until this check finishes.
 
-```bash
-sudo ovs-ofctl -O OpenFlow13 dump-flows s1
+Point out priority 200, source `10.0.0.1`, destination `10.0.0.4`, TCP port 8080 and the hard timeout. **Wait at least 65 seconds from starting this check**, then at `mininet>`:
+
+```text
+sh cat logs/expiry-demo.log
+h_srv python3 -B demo_checks.py service
+sh ovs-ofctl -O OpenFlow13 dump-flows s1
 ```
 
-Point out priority 200, source `10.0.0.1`, destination `10.0.0.4`, TCP port 8080 and the hard timeout. After the wait, check the flows again and confirm service health from h_srv. Say: “The permission is temporary, even if the user forgets to log out.”
+Confirm the log's final timeout observation, healthy service, and absence of the priority-200 grant. A partial log still showing the wait means the check has not completed. Say: “The permission is temporary, even if the user forgets to log out.” The timeout itself remains inconclusive without the health/flow checks.
 
 ## 7. Show concurrency and failed-login protection
 
@@ -91,6 +101,14 @@ h2 python3 -B demo_checks.py lockout --recover
 The second command waits about a minute to prove recovery. Explain that the lockout is per source IP, while session tokens identify individual logins. The concurrency check logs out all successfully created sessions.
 
 If time is short, show either concurrency or lockout and use the recorded VM results for the other.
+
+Show the authentication/access log at `mininet>`:
+
+```text
+sh tail -n 10 logs/security.log
+```
+
+Point out failures, lockout/recovery and successful access updates. Do not print the private key or live session tokens.
 
 ## Optional controller-failure check
 
@@ -108,6 +126,14 @@ New login must fail. This does not establish immediate revocation of an existing
 
 Show the **fresh VM results** in [data/PERFORMANCE.md](data/PERFORMANCE.md). Compare service transaction time across dynamic and static modes. Dynamic login/control time is separate authorization overhead; the static baseline has no login step.
 
+At `mininet>`, display the saved batch:
+
+```text
+sh python3 -B summarize_performance.py data/performance_results_current.csv --label 'Validated final-source VM batch'
+```
+
+The [chart and benchmark method](BENCHMARK.md) show every sample, including outliers. Dynamic/static service medians are 2.5200/0.9955 ms in this batch; the dynamic mean is much higher because of three long trials.
+
 Do not run a new benchmark during a short presentation. Do not claim SDN is always faster based on a single VM batch.
 
 ## 9. Finish
@@ -115,11 +141,13 @@ Do not run a new benchmark during a short presentation. Do not claim SDN is alwa
 At `mininet>`, stop only the two servers launched above, using their recorded PIDs:
 
 ```text
+h_auth ps -p $(cat logs/h_auth.pid) -o pid,args
+h_srv ps -p $(cat logs/h_srv.pid) -o pid,args
 h_auth kill -TERM $(cat logs/h_auth.pid)
 h_srv kill -TERM $(cat logs/h_srv.pid)
 exit
 ```
 
-Use these PID files only for this running demo; do not reuse old PID files after a restart. The `exit` command stops this topology. In Terminal B, press Ctrl+C to stop this controller. Do not terminate unrelated processes or modify the original project.
+First check that the PIDs identify this run's `auth_server.py` and `protected_service.py`; stop if they identify something else. Use these PID files only for this running demo; do not reuse old PID files after a restart. The `exit` command stops this topology. In Terminal B, press Ctrl+C to stop this controller. Do not terminate unrelated processes or modify the original project.
 
 For the viva, start with the five central files in README. You do not need to explain every test method unless asked.

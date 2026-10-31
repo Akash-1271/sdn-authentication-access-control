@@ -14,3 +14,11 @@ sudo env PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3 -B audit_live.py --output-di
 Replace UNIQUE with an unused directory name. Check existing bridges/interfaces/listeners first and stop your own demonstration normally. Never use the stale-removal flag or broad cleanup. The live runner creates an owned Mininet topology, runs checks, measures 20 dynamic and 20 static trials, and cleans up its resources. Add --master for the extended run with a different fresh output directory. Keep generated keys/logs outside GitHub.
 
 Candidate runtime passed fresh Ubuntu validation; actual counts and limitations are in ../RESULTS.md. Compact tests remain directly available in ../tests/. This toolkit includes the documented synthetic CSV fixture, bounded thread-event wait and startup-wait repair; application deadlines were unchanged.
+
+## Repository checks
+
+From the application root, `python3 -B verification/check_project.py` checks source hashes, exact toolkit runtime copies, archive integrity, the retained benchmark and local Markdown links. It uses only Python's standard library and does not create a topology.
+
+GitHub's `Project checks` workflow runs that checker and both isolated test suites on Ubuntu/Python 3.11, treating skipped tests as a failed gate. This is separate from privileged Mininet live validation. [SETUP.md](../SETUP.md) explains the two Python environments.
+
+`plot_results.py` regenerates `data/performance-comparison.svg` from the retained CSV. It is optional reporting code and requires matplotlib in a separate plotting environment; it is not an application dependency. For example, create an unrelated plotting venv, install matplotlib there, and use its Python to run `verification/plot_results.py` from the checkout root. Source measurements are read-only; the figure is regenerated.
