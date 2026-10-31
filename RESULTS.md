@@ -65,3 +65,11 @@ The final verified runtime, compact tests, documentation, raw performance data a
 ## Development and commit history
 
 This repository is a new import of the already validated project from https://github.com/Akash-1271/sdn-authentication-dynamic-access-control-simplified at commit 74acf6ba7a6f7ae359883c70e74680cc6c9a96b0. Runtime source, tests and measurements are unchanged. Component commits organise the shared networking code, SDN components, application, tests, measured data and documentation. Their dates record this import, not the original development timeline. The source repository and its complete history remain available.
+
+## Rubric and reproducibility review - 31 October 2026
+
+The application runtime, compact tests, raw CSV, runtime manifests and extended toolkit are unchanged from the validated edition. The review adds [exact rubric coverage](RUBRIC.md), [code/protocol explanations](IMPLEMENTATION.md), [setup checks](SETUP.md), a two-terminal demo, and a [measurement method/chart](BENCHMARK.md). Git attributes now preserve the imported source bytes when cloning on Windows; previously automatic line-ending conversion changed three working-tree hashes despite unchanged Git blobs.
+
+[Repository consistency checks](verification/check_project.py) validate runtime/configuration hashes, toolkit copies/CRC, measured statistics and local documentation links. The `Project checks` workflow executes the compact and extended regression suites on Ubuntu/Python 3.11 with zero skips required. Its run status is available in this repository's Actions tab; creating the workflow is not itself a claim that the run passed.
+
+A local WSL Python 3.14 run passed 19 compact tests and skipped 8 OS-Ken tests because that environment lacks OS-Ken. It is a partial check, not new Mininet evidence. The VM handoff asks for a rehearsal of the updated instructions and a dated return report. The 29 October live validation and performance data remain separate from this documentation review.

@@ -4,11 +4,11 @@
 
 Python sockets · Mininet · Open vSwitch · OpenFlow 1.3 · OS-Ken
 
-[Demo steps](DEMO.md) · [Tests and results](RESULTS.md) · [Performance](data/PERFORMANCE.md)
+[Setup](SETUP.md) · [Demo](DEMO.md) · [Understand the code](IMPLEMENTATION.md) · [Rubric coverage](RUBRIC.md) · [Results](RESULTS.md)
 
 > Validated in Ubuntu on 29 October 2026: 27 compact and 75 original regression tests passed without skips, followed by real Mininet checks and an automated demo rehearsal. Both earlier projects remain available unchanged.
 
-This repository imports the [previous validated edition](https://github.com/Akash-1271/sdn-authentication-dynamic-access-control-simplified) in logical component commits. These commits organise an existing project; they do not recreate its original development timeline.
+This repository contains the final course project. Its [development history](RESULTS.md#development-and-commit-history) records the import of the previously validated edition.
 
 ## What it does
 
@@ -67,14 +67,14 @@ On a new, already provisioned Ubuntu machine, install Mininet/OVS and make Minin
 
 ```bash
 git clone https://github.com/Akash-1271/sdn-authentication-access-control.git
-cd sdn-authentication-dynamic-access-control-simplified
+cd sdn-authentication-access-control
 python3.11 -m venv .venv311
 .venv311/bin/python -m pip install -r requirements.txt
 .venv311/bin/python -m pip check
 PYTHONDONTWRITEBYTECODE=1 .venv311/bin/python -B -m unittest discover -s tests -v
 ```
 
-For a fresh clone, replace the absolute project path in DEMO.md with your checkout path and change `/home/akash/...` private-state paths to your own home directory. The guide also explains the private key path and startup commands.
+[SETUP.md](SETUP.md) distinguishes system Python for Mininet from the controller environment, explains fresh-checkout paths, and provides dependency and resource checks. [DEMO.md](DEMO.md) uses two Ubuntu terminals and labels every command by its destination.
 
 The controller and auth server require the same private 0600 key through SDN_CONTROL_SECRET_FILE. Generate it outside the repository using control_security.py --generate-key PATH. Demo accounts alice/123 and bob/456 are public lab accounts.
 
@@ -84,6 +84,16 @@ AUTH_LEASE_SECONDS and AUTH_LOCKOUT_SECONDS default to 60. AUTH_LOG_FILE selects
 
 Compare service transaction time for 20 dynamic and 20 static trials. Report login/control overhead separately. Keep all raw samples, mean, median and outliers. The [previous validated results](data/reference-20261026/PERFORMANCE.md) are reference measurements; the fresh final-source batch is in [data/PERFORMANCE.md](data/PERFORMANCE.md).
 
+![All 40 measured service transactions, with mean and median](data/performance-comparison.svg)
+
+The dynamic service median was **2.5200 ms**, versus **0.9955 ms** for static access in this VM batch. Three long dynamic trials raise its mean to **154.8531 ms**; they remain in the data. The purpose of dynamic control is temporary authenticated access, not a claim of faster service. See the [measurement method and repeat commands](BENCHMARK.md).
+
 HMAC authenticates control requests but does not encrypt them. This trusted lab uses plaintext demo credentials/tokens, volatile sessions and source-IP permissions. Users on one host share network access. No IP/ARP anti-spoofing is implemented. Existing grants can survive controller failure until their hard timeout; failed revocations are retryable. A client timeout leaves the login outcome uncertain: a temporary grant may have been installed even if its token was not received.
 
 The project covers TCP authentication, concurrency, sessions/timeouts, dynamic SDN policies, logs, unauthorized-access tests, robustness and baseline evaluation. [RESULTS.md](RESULTS.md) maps requirements to evidence. Extended regression/live tooling is retained under [verification/](verification/README.md).
+
+## What to explain
+
+Start with [one successful request](IMPLEMENTATION.md#one-successful-request), then the five central files, the priority 200/100/0 rules, and what changes on logout or expiry. The implementation guide includes exact message examples, important functions and short questions tied to the code.
+
+AI assistance is permitted for this course. Explain the actual implementation and the tests you have observed; use [the code reading checklist](IMPLEMENTATION.md#code-reading-checklist) to prepare. Commit dates describe publication/import work, not an invented development timeline.

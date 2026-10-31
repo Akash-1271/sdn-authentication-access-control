@@ -1,0 +1,7 @@
+# Keep the validated source and measurements byte-identical on every host.
+# The imported runtime contains both LF and CRLF files; do not renormalize it.
+*.py -text
+requirements.txt -text
+*.csv -text
+*.json -text
+*.zip binary
