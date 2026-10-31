@@ -26,6 +26,10 @@ jobs:
         run: |
           python -m pip install -r requirements.txt
           python -m pip check
+      - name: Install system Mininet for the unprivileged topology preflight test
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y mininet
       - name: Check source, measurements and documentation
         run: python -B verification/check_project.py
       - name: Compact tests (skips fail this gate)
