@@ -16,7 +16,7 @@ Use the actual `AUTH_LOG_FILE` path selected when starting your auth server. A m
 
 In **Firefox inside Ubuntu**, open **http://127.0.0.1:8765**. Windows localhost is a different machine; this command does not expose a network service to Windows. Port 8765 must be free; choose `--port 8766` if occupied. Enter a sudo password yourself if prompted.
 
-The viewer uses sudo only to read OVS. It serves two fixed GET routes on loopback and has no command, upload or file-selection endpoint. It accepts no remote bind address. Stop it with Ctrl+C in its terminal; this does not stop your project. Existing validated fallback directories do not need to be changed: the viewer can run from a separate checkout while reading the explicitly selected candidate log.
+The viewer uses sudo only to read OVS. It serves fixed page, activity-script and state GET routes on loopback and has no command, upload or file-selection endpoint. It accepts no remote bind address. Stop it with Ctrl+C in its terminal; this does not stop your project. Existing validated fallback directories do not need to be changed: the viewer can run from a separate checkout while reading the explicitly selected candidate log.
 
 ## What to show
 
@@ -37,6 +37,21 @@ The viewer uses sudo only to read OVS. It serves two fixed GET routes on loopbac
 - **Events**: recognized log history; usernames, tokens and arbitrary fields are omitted. Reusing an old log shows old events too. The observer does not inspect session dictionaries.
 - **Measurements**: actual saved CSV values; not live latency probes. Login/control time is separate from service transaction time. Retained and fresh measurements remain separate.
 
+## Animated activity in dark mode
+
+The viewer starts in dark mode. Enable **Animate observed activity** to illustrate newly observed changes:
+
+- Green dots: increases in a recognized host's service-bound allow counter. One animation represents a sampled batch; the caption gives the actual packet-count increase. A request can produce several TCP packets.
+- Cyan dots: the client-to-authentication path illustrated from a new recognized login event. This is log-driven, not packet capture or proof of each hop's timing.
+- Red switch pulse: the service-drop counter increased. The aggregate rule does not identify the source, so no client is invented.
+- Other access events pulse the switch; an unconfirmed update is amber.
+
+In the Ubuntu Mininet terminal, keep the documented background expiry scenario running. While its real grant is active, run `h1 python3 -B demo_checks.py service`. The next sampled counter increase can animate h1 → s1 → h_srv. After real expiry, corroborate denial and service health as usual; drop-counter increases pulse s1. Do not start a second login scenario until expiry finishes.
+
+Polling is every two seconds, so a brief grant can be missed. The first sample establishes a baseline; old history does not animate on page opening or reconnection. Replaced rules use their new counters, not the previous rule generation. Pausing motion keeps data refreshing and does not queue old activity for later. Motion respects reduced-motion preferences, is bounded to small batches and has no continuous decorative loop.
+
+Recorded mode has no automatic live animation. **Replay a recorded login** illustrates a selected genuine log event and labels its timestamp; the flow snapshot and log are independent historical sources. The replay does not send network traffic or establish that the shown flow existed at that event time.
+
 ## Recorded preview — Windows or Ubuntu
 
 For a returned evidence folder, choose one actual saved flow dump, its log and its fresh CSV:
@@ -54,5 +69,7 @@ python3 -B -m unittest discover -s tools/tests -v
 ```
 
 Seven observer tests cover rule interpretation, invalid rules, field sanitization, recorded-mode isolation, unavailable-switch handling, read-only commands and HTTP restrictions. They are separate from the original 27 compact and 75 regression tests. HTTP/recorded display can be checked on Windows; real OVS polling and live visual changes still require an Ubuntu run. No additional application feature or rubric credit is claimed for the viewer.
+
+Eight additional observation-model tests check baseline/history suppression, per-source counter deltas, unattributed drops, rule replacement, counter decreases, event deduplication, recorded-mode isolation and reconnection. Run `node --test tools/tests/test_activity.cjs` using Node.js 18 or newer for these development checks. Node is not needed to run the viewer: browser JavaScript uses `activity.js`, served locally by Python.
 
 The final independent review expanded those checks for forged metadata inside usernames and for restricted/nonzero-table service rules. The viewer reads event-specific server-written suffixes and marks unfamiliar protected-service policies unknown instead of inferring a host-wide grant or denial. Ordinary project flows and genuine logout, expiry and failed-allow cleanup events remain supported.

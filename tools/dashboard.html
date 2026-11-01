@@ -3,19 +3,19 @@
 <title>SDN Lab · Access control</title>
 <style>
 
-:root {color-scheme:light;--bg:#f5f7f8;--panel:#fff;--line:#e3e9ec;--muted:#62727d;--ink:#192b36;--green:#207f64;--amber:#8a672f;--red:#a44d55}
+:root {color-scheme:dark;--bg:#09121b;--panel:#101e2b;--line:#263b4b;--muted:#a4b6c4;--ink:#edf5fb;--green:#6ce2b8;--amber:#edc88a;--red:#ff929c}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,sans-serif}
+body{margin:0;background:radial-gradient(ellipse at 50% 0,#13283b 0,transparent 65%),var(--bg);color:var(--ink);font:14px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,sans-serif}
 main{max-width:1160px;margin:auto;padding:38px 30px}
 header{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-bottom:25px}
 h1{font-size:34px;font-weight:650;letter-spacing:-1.3px;line-height:1.2;margin:6px 0 10px}
 h2{font-size:15px;font-weight:650;letter-spacing:-.25px;margin:0 0 8px}
 p{margin:5px 0;color:var(--muted)}
 .eyebrow{font-size:10px;font-weight:700;letter-spacing:1.8px;color:var(--green)}
-.badge{display:inline-flex;align-items:center;gap:7px;padding:6px 10px;border:1px solid #e6dac5;border-radius:6px;background:#fffaf1;color:var(--amber);font-size:10px;font-weight:700;letter-spacing:.4px}
+.badge{display:inline-flex;align-items:center;gap:7px;padding:6px 10px;border:1px solid #51432e;border-radius:6px;background:#29251e;color:var(--amber);font-size:10px;font-weight:700;letter-spacing:.4px}
 .badge:before{content:'';height:6px;width:6px;background:currentColor;border-radius:50%}
-.badge[data-tone=live]{background:#edf7f1;border-color:#c5dfd2;color:var(--green)}
-.badge[data-tone=unknown]{background:#fff;border-color:var(--line);color:var(--muted)}
+.badge[data-tone=live]{background:#142f29;border-color:#335c4f;color:var(--green)}
+.badge[data-tone=unknown]{background:#0d1a25;border-color:var(--line);color:var(--muted)}
 .metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px;margin:22px 0}
 .metric,.panel{background:var(--panel);border:1px solid var(--line);border-radius:11px}
 .metric{padding:18px 21px}
@@ -24,20 +24,20 @@ p{margin:5px 0;color:var(--muted)}
 .label{font-size:12px;color:var(--muted)}
 .small{font-size:12px;color:var(--muted)}
 .columns{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:19px;align-items:start}
-.topology{display:grid;grid-template-columns:minmax(0,1fr) 112px minmax(0,1fr);gap:23px;align-items:center;margin:29px 0 24px}
-.hosts{display:grid;gap:15px;position:relative;z-index:1}
-.node{padding:15px 10px;text-align:center;border:1px solid var(--line);border-radius:8px;background:#fff;min-width:0}
+.topology{position:relative;isolation:isolate;display:grid;grid-template-columns:minmax(0,1fr) 112px minmax(0,1fr);gap:23px;align-items:center;margin:29px 0 24px}
+.hosts{display:grid;gap:15px;position:relative;z-index:auto}
+.node{position:relative;z-index:2;padding:15px 10px;text-align:center;border:1px solid var(--line);border-radius:8px;background:#0d1a25;min-width:0}
 .node strong{display:block;font-size:12px;font-weight:650}
 .node span{font:11px/1.6 ui-monospace,Consolas,monospace;color:var(--muted);white-space:nowrap}
 .node em{display:block;font-size:11px;font-style:normal;color:var(--muted);margin-top:7px}
-.node[data-state=allow]{border-color:#b6d6c8;background:#f9fdfa}
+.node[data-state=allow]{border-color:#426a5b;background:#122b25}
 .node[data-state=allow] em{color:var(--green)}
 .node[data-state=deny] em{color:var(--red)}
-.switch{position:relative;background:#edf5f1;border-color:#d2e2da;padding:21px 7px}
+.switch{position:relative;background:#142e2b;border-color:#31574c;padding:21px 7px}
 .switch strong{font-size:21px;letter-spacing:-.6px}
 .switch span{font-size:9px}
 .switch em{font-size:9px}
-.switch:before,.switch:after{content:'';position:absolute;height:1px;width:24px;background:#bccfc6;top:50%}
+.switch:before,.switch:after{content:'';position:absolute;height:1px;width:24px;background:#3d5d68;top:50%}
 .switch:before{right:100%}.switch:after{left:100%}
 .legend{display:flex;gap:15px;flex-wrap:wrap;color:var(--muted);font-size:10px;border-top:1px solid var(--line);padding-top:13px}
 .legend b{font-weight:650;color:var(--green)}
@@ -47,20 +47,20 @@ th{font-weight:500;font-size:11px;color:var(--muted)}
 tr:last-child td{border-bottom:0}
 .table-wrap{overflow-x:auto}
 #events{display:grid;gap:0;max-height:370px;overflow-y:auto;scrollbar-width:thin;padding-right:5px}
-.event{position:relative;padding:0 0 17px 17px;border-left:1px solid #e0e9e4;margin-left:4px}
-.event:before{content:'';position:absolute;left:-3px;top:5px;width:5px;height:5px;border-radius:50%;background:#7a9d8d}
+.event{position:relative;padding:0 0 17px 17px;border-left:1px solid #30484e;margin-left:4px}
+.event:before{content:'';position:absolute;left:-3px;top:5px;width:5px;height:5px;border-radius:50%;background:#76a992}
 .event time{display:block;color:var(--muted);font-size:10px;margin-bottom:3px;font-variant-numeric:tabular-nums}
 .event strong{font-size:12px;font-weight:600}
 .event p{font-size:11px;margin:2px 0 0;overflow-wrap:anywhere}
-#notice{background:#fffdf8;border:1px solid #e9e1d2;border-left:3px solid #c4a56c;border-radius:6px;padding:11px 14px;color:#816b47;margin:0 0 21px;font-size:11px}
+#notice{background:#24231f;border:1px solid #494132;border-left:3px solid #c4a56c;border-radius:6px;padding:11px 14px;color:#dec38e;margin:0 0 21px;font-size:11px}
 #notice:empty{display:none}
-.foot{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-top:20px;font-size:10px;color:#8c999f}
+.foot{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-top:20px;font-size:10px;color:#90a4b3}
 #connection{font-size:11px;font-variant-numeric:tabular-nums;margin-top:7px}
 .bars{display:grid;gap:18px;margin:20px 0 25px;max-width:620px}
 .bar-row{display:grid;grid-template-columns:110px minmax(0,1fr) 85px;gap:15px;align-items:center;font-size:11px}
-.track{height:7px;background:#edf1f3;border-radius:6px}
-.fill{height:7px;background:#68a38c;border-radius:6px}
-.static{background:#8ba7c5}
+.track{height:7px;background:#203443;border-radius:6px}
+.fill{height:7px;background:#60cfa5;border-radius:6px}
+.static{background:#83a8d9}
 details{margin-top:17px;border-top:1px solid var(--line);padding-top:12px}
 summary{font-size:11px;color:var(--muted);cursor:pointer;width:fit-content}
 summary:focus-visible{outline:3px solid #a3c8b9;outline-offset:5px}
@@ -69,24 +69,186 @@ details .table-wrap{margin-top:13px}
 #measurement-status,#event-status{margin-top:0;overflow-wrap:anywhere}
 @media(min-width:601px){header>div:last-child{text-align:right}}
 @media(max-width:980px){.columns{grid-template-columns:1fr}#events{grid-template-columns:1fr 1fr;column-gap:25px;max-height:245px}.topology{grid-template-columns:minmax(0,1fr) 130px minmax(0,1fr);gap:35px}.switch:before,.switch:after{width:36px}}
-@media(max-width:600px){main{padding:24px 17px}header{align-items:flex-start;flex-direction:column;gap:15px;margin-bottom:19px}h1{font-size:29px}.eyebrow{font-size:9px;letter-spacing:1.2px}.metrics{gap:8px;margin:17px 0}.metric{padding:14px 10px}.metric .label{font-size:11px;min-height:34px}.metric .small{display:none}.value{font-size:26px;overflow-wrap:anywhere}.panel{padding:18px}.topology{grid-template-columns:1fr;gap:17px;margin:24px 0 20px}.hosts{grid-template-columns:1fr 1fr;gap:12px}.switch{width:140px;justify-self:center;padding:12px 7px}.switch:before,.switch:after{width:1px;height:18px;left:50%;right:auto}.switch:before{top:-18px}.switch:after{top:100%}.node{padding:12px 6px}.node span{font-size:10px}.legend{gap:10px;font-size:10px}#events{grid-template-columns:1fr;max-height:305px}.bar-row{grid-template-columns:83px minmax(0,1fr) 70px;gap:9px;font-size:11px}th,td{padding:11px 4px;font-size:11px}}
+@media(max-width:600px){main{padding:24px 17px}header{align-items:flex-start;flex-direction:column;gap:15px;margin-bottom:19px}h1{font-size:29px}.eyebrow{font-size:9px;letter-spacing:1.2px}.metrics{gap:8px;margin:17px 0}.metric{padding:14px 10px}.metric .label{font-size:11px;min-height:34px}.metric .small{display:none}.value{font-size:26px;overflow-wrap:anywhere}.panel{padding:18px}.topology{grid-template-columns:1fr;gap:17px;margin:24px 0 20px}.hosts{grid-template-columns:1fr 1fr;gap:12px}.switch{width:140px;justify-self:center;padding:12px 7px}.switch:before,.switch:after{width:1px;height:18px;left:50%;right:auto}.switch:before{top:-18px}.switch:after{top:100%}.node{position:relative;z-index:2;padding:12px 6px}.node span{font-size:10px}.legend{gap:10px;font-size:10px}#events{grid-template-columns:1fr;max-height:305px}.bar-row{grid-template-columns:83px minmax(0,1fr) 70px;gap:9px;font-size:11px}th,td{padding:11px 4px;font-size:11px}}
+.metric,.panel{box-shadow:0 8px 28px #00000014}
+.node{transition:border-color .3s,background .3s}
+.switch:before,.switch:after{display:none}
+.network-links{position:absolute;inset:0;width:100%;height:100%;z-index:1;overflow:visible;pointer-events:none}
+.network-links path{fill:none;stroke:#3b5969;stroke-width:1.3}
+.network-packet{filter:drop-shadow(0 0 5px currentColor)}
+.motion-controls{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-top:9px}
+.motion-controls label{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--muted)}
+.motion-controls input{accent-color:var(--green)}
+.motion-controls button{font:inherit;font-size:11px;color:var(--ink);background:#1d3545;border:1px solid #3a5467;border-radius:6px;padding:7px 10px;cursor:pointer}
+.motion-controls button:hover{background:#29475a}
+.motion-controls button:focus-visible{outline:2px solid var(--green);outline-offset:3px}
+.motion-controls button[hidden]{display:none}
+.motion-status{font-size:11px;min-height:34px;margin:12px 0;color:#b9cfdf}
+@media(prefers-reduced-motion:reduce){.node{transition:none}}
 </style></head><body><main>
 <header><div><div class="eyebrow">SDN LAB / AUTHENTICATION & ACCESS CONTROL</div><h1>Access control</h1><p>Follow authentication decisions through the network.</p></div><div><span class="badge" id="mode">Connecting…</span><p class="small" id="connection" aria-live="polite">Waiting for the local collector</p></div></header>
 <div id="notice" role="status"></div>
 <section class="metrics" aria-label="Switch counters"><div class="metric"><div class="label">Host IP grants</div><div class="value" id="grants">—</div><div class="small">Observed service allow rules</div></div><div class="metric"><div class="label">Allowed packets</div><div class="value" id="allowed">—</div><div class="small">Current allow-rule counters</div></div><div class="metric"><div class="label">Dropped packets</div><div class="value" id="dropped">—</div><div class="small">Service deny-rule counter</div></div></section>
-<div class="columns"><section class="panel"><h2>Network topology</h2><p class="small">Four configured hosts. One programmable switch.</p><div class="topology"><div class="hosts"><div class="node" id="h1"><strong>h1</strong><span>10.0.0.1</span><em>Unknown</em></div><div class="node" id="h2"><strong>h2</strong><span>10.0.0.2</span><em>Unknown</em></div></div><div class="node switch"><strong>s1</strong><span>OpenFlow 1.3</span><em id="policy">Policy unknown</em></div><div class="hosts"><div class="node"><strong>h_auth</strong><span>10.0.0.3 : 9000</span><em>Authentication</em></div><div class="node"><strong>h_srv</strong><span>10.0.0.4 : 8080</span><em>Protected data</em></div></div></div><div class="legend"><span><b>200</b> source allow</span><span>100 service drop</span><span>0 other traffic</span></div><p class="small" id="listeners"></p><h2 style="margin-top:24px;font-size:13px">Service rules</h2><div class="table-wrap"><table><thead><tr><th>Policy</th><th>Source</th><th>Packets</th><th>Lease left</th></tr></thead><tbody id="rules"></tbody></table></div><details><summary>How to read the network</summary><p>Colours show observed service rules, not reachability or service health. Host grants are IP permissions, not active session tokens. Remaining lease is estimated at sample time. Counters reset when rules are replaced and do not count logins.</p></details></section>
+<div class="columns"><section class="panel"><h2>Network topology</h2><p class="small">Four configured hosts. One programmable switch.</p><div class="topology" id="network-map"><svg class="network-links" id="network-links" aria-hidden="true"><g id="network-wires"></g><g id="network-packets"></g></svg><div class="hosts"><div class="node" id="h1"><strong>h1</strong><span>10.0.0.1</span><em>Unknown</em></div><div class="node" id="h2"><strong>h2</strong><span>10.0.0.2</span><em>Unknown</em></div></div><div class="node switch" id="s1"><strong>s1</strong><span>OpenFlow 1.3</span><em id="policy">Policy unknown</em></div><div class="hosts"><div class="node" id="h_auth"><strong>h_auth</strong><span>10.0.0.3 : 9000</span><em>Authentication</em></div><div class="node" id="h_srv"><strong>h_srv</strong><span>10.0.0.4 : 8080</span><em>Protected data</em></div></div></div><div class="motion-controls"><label><input type="checkbox" id="animate-activity" checked> Animate observed activity</label><button type="button" id="replay-event" hidden>Replay a recorded login</button></div><p class="motion-status" id="motion-status" role="status" aria-live="polite">Waiting for an activity baseline</p><div class="legend"><span><b>200</b> source allow</span><span>100 service drop</span><span>0 other traffic</span></div><p class="small" id="listeners"></p><h2 style="margin-top:24px;font-size:13px">Service rules</h2><div class="table-wrap"><table><thead><tr><th>Policy</th><th>Source</th><th>Packets</th><th>Lease left</th></tr></thead><tbody id="rules"></tbody></table></div><details><summary>How to read the network</summary><p>Colours show observed service rules, not reachability or service health. Host grants are IP permissions, not active session tokens. Remaining lease is estimated at sample time. Counters reset when rules are replaced and do not count logins. Moving dots illustrate sampled activity batches, not individual captured packets. Green paths use actual source-specific allow-counter increases; red switch pulses use unattributed drop-counter increases. Cyan paths illustrate newly logged authentication events. Opening a page does not replay old live history. Short-lived rules can be missed between samples.</p></details></section>
 <section class="panel"><h2>Authentication activity</h2><p class="small" id="event-status">No log configured</p><div id="events" style="margin-top:18px"></div><details><summary>About these events</summary><p>Recognized entries from the selected authentication log. Reused logs retain older events. This is history, not current in-memory session state. Usernames and tokens are omitted.</p></details></section></div>
 <section class="panel" style="margin-top:18px"><h2>Service performance</h2><p class="small" id="measurement-status">No measurement file configured</p><p class="small" style="margin-top:16px">Median service transaction time · milliseconds</p><div class="bars" id="bars"></div><details><summary>View all measurements</summary><div class="table-wrap"><table><thead><tr><th>Mode / metric</th><th>Trials</th><th>Mean (ms)</th><th>Median (ms)</th></tr></thead><tbody id="measurements"></tbody></table></div><p class="small">Saved CSV values. Service time includes connection + request/reply; login overhead is separate. This view does not run a benchmark.</p></details></section>
 <p class="foot"><span>SDN authentication & dynamic access control</span><span>Read-only · Refreshes every 2 seconds</span></p>
-</main><script>
+</main><script src="/activity.js"></script><script>
 const el=id=>document.getElementById(id);
 function text(tag,value){const n=document.createElement(tag);n.textContent=value;return n;}
 function row(parent,values){const tr=document.createElement('tr');values.forEach(v=>tr.append(text('td',String(v))));parent.append(tr);}
+const svgNS = 'http://www.w3.org/2000/svg';
+class NetworkMotion {
+  constructor() {
+    this.monitor = new SDNActivity.ActivityMonitor();
+    this.lastState = null;
+    this.timers = new Set();
+    this.reduced = matchMedia('(prefers-reduced-motion: reduce)');
+    el('animate-activity').checked = !this.reduced.matches;
+    this.reduced.addEventListener('change', event => {
+      if (event.matches) { el('animate-activity').checked = false; this.clear(); }
+    });
+    el('animate-activity').addEventListener('change', () => {
+      this.clear();
+      el('motion-status').textContent = el('animate-activity').checked
+        ? this.lastState?.mode === 'recorded'
+          ? 'Recorded snapshot · use Replay to illustrate a selected recorded login'
+          : 'Waiting for the next observed activity change'
+        : 'Animation paused · data continues to refresh';
+    });
+    el('replay-event').addEventListener('click', () => {
+      const event = this.lastState?.events.find(item => item.event === 'LOGIN_SUCCESS');
+      if (this.lastState?.mode === 'recorded' && event) {
+        this.clear();
+        el('animate-activity').checked = !this.reduced.matches;
+        this.show({kind:'event',event}, true);
+      }
+    });
+    new ResizeObserver(() => this.draw()).observe(el('network-map'));
+  }
+
+  later(callback, delay) {
+    const timer = setTimeout(() => { this.timers.delete(timer); callback(); }, delay);
+    this.timers.add(timer);
+  }
+
+  clear() {
+    this.timers.forEach(clearTimeout);
+    this.timers.clear();
+    el('network-packets').replaceChildren();
+    document.querySelectorAll('.node').forEach(node => node.getAnimations().forEach(animation => animation.cancel()));
+  }
+
+  path(from, to) {
+    const map = el('network-map').getBoundingClientRect();
+    const a = el(from).getBoundingClientRect(), b = el(to).getBoundingClientRect();
+    const ac = {x:a.x+a.width/2-map.x, y:a.y+a.height/2-map.y};
+    const bc = {x:b.x+b.width/2-map.x, y:b.y+b.height/2-map.y};
+    if (Math.abs(bc.x-ac.x) > Math.abs(bc.y-ac.y)) {
+      const sign = bc.x > ac.x ? 1 : -1;
+      const x1 = ac.x + sign*a.width/2, x2 = bc.x - sign*b.width/2;
+      const mid = (x1+x2)/2;
+      return `M ${x1} ${ac.y} C ${mid} ${ac.y}, ${mid} ${bc.y}, ${x2} ${bc.y}`;
+    }
+    const sign = bc.y > ac.y ? 1 : -1;
+    const y1 = ac.y + sign*a.height/2, y2 = bc.y - sign*b.height/2;
+    const mid = (y1+y2)/2;
+    return `M ${ac.x} ${y1} C ${ac.x} ${mid}, ${bc.x} ${mid}, ${bc.x} ${y2}`;
+  }
+
+  draw() {
+    const map = el('network-map');
+    el('network-links').setAttribute('viewBox', `0 0 ${map.clientWidth} ${map.clientHeight}`);
+    el('network-wires').replaceChildren();
+    for (const host of ['h1','h2','h_auth','h_srv']) {
+      const path = document.createElementNS(svgNS,'path');
+      path.setAttribute('d',this.path(host,'s1'));
+      el('network-wires').append(path);
+    }
+  }
+
+  pulse(id, color) {
+    if (this.reduced.matches || !el('animate-activity').checked) return;
+    el(id).animate([{boxShadow:`0 0 0 1px ${color}, 0 0 22px ${color}44`},
+      {boxShadow:'0 0 0 0 transparent'}], {duration:1100,easing:'ease-out'});
+  }
+
+  dot(from, to, color) {
+    if (this.reduced.matches || !el('animate-activity').checked) return;
+    if (el('network-packets').childElementCount >= 12) return;
+    const circle = document.createElementNS(svgNS,'circle');
+    circle.setAttribute('r','3.5'); circle.setAttribute('fill',color);
+    circle.style.color = color; circle.classList.add('network-packet');
+    const movement = document.createElementNS(svgNS,'animateMotion');
+    movement.setAttribute('path',this.path(from,to));
+    movement.setAttribute('dur','0.65s'); movement.setAttribute('begin','indefinite');
+    movement.setAttribute('calcMode','paced'); movement.setAttribute('fill','freeze');
+    circle.append(movement); el('network-packets').append(circle);
+    try { movement.beginElement(); } catch (_) { circle.remove(); }
+    this.later(() => circle.remove(),700);
+  }
+
+  travel(source, target, color, count=1) {
+    const host = source === '10.0.0.1' ? 'h1' : source === '10.0.0.2' ? 'h2' : null;
+    if (!host) return;
+    this.pulse(host,color);
+    for (let index=0; index<Math.min(count,3); index++) {
+      this.later(() => this.dot(host,'s1',color), index*120);
+      this.later(() => { this.pulse('s1',color); this.dot('s1',target,color); },650+index*120);
+    }
+    this.later(() => this.pulse(target,color),1300);
+  }
+
+  show(activity, replay=false) {
+    const prefix = replay ? 'Recorded event illustration' : 'Observed activity';
+    if (activity.kind === 'service') {
+      el('motion-status').textContent = `${prefix} · +${activity.count} service-bound packets from ${activity.source} · sampled batch`;
+      this.travel(activity.source,'h_srv','#6ce2b8',activity.count);
+    } else if (activity.kind === 'drop') {
+      el('motion-status').textContent = `${prefix} · +${activity.count} dropped packets at s1 · source not attributed`;
+      this.pulse('s1','#ff929c');
+    } else {
+      const event = activity.event;
+      el('motion-status').textContent = `${prefix} · ${event.event.replaceAll('_',' ')} · ${event.source} · ${event.time} · log-driven path`;
+      if (['LOGIN_SUCCESS','LOGIN_FAILURE'].includes(event.event)) this.travel(event.source,'h_auth','#81c9f1');
+      else this.pulse('s1',event.event === 'ACCESS_UPDATE_UNCONFIRMED' ? '#edc88a' : '#6ce2b8');
+    }
+  }
+
+  observe(state) {
+    const first = !this.monitor.previous;
+    const changes = this.monitor.update(state);
+    this.lastState = state;
+    this.draw();
+    el('replay-event').hidden = state.mode !== 'recorded' || !state.events.some(item => item.event === 'LOGIN_SUCCESS');
+    if (state.mode === 'recorded') {
+      if (this.mode !== 'recorded') el('motion-status').textContent = 'Recorded snapshot · automatic motion is off. Replay illustrates a selected recorded login.';
+    } else if (!state.switch_ok) {
+      this.clear();
+      el('motion-status').textContent = 'Switch policy unavailable · activity animation is paused';
+    } else if (!el('animate-activity').checked) {
+      el('motion-status').textContent = 'Animation paused · data continues to refresh';
+    } else if (first) {
+      el('motion-status').textContent = 'Live baseline ready · waiting for new log events or packet-counter increases';
+    } else {
+      // Bound visual work on the VM. Dots illustrate batches, never one dot per packet.
+      changes.slice(0,4).forEach((activity,index) => this.later(() => this.show(activity),index*450));
+    }
+    this.mode = state.mode;
+  }
+
+  disconnect() {
+    this.clear(); this.monitor.reset(); this.lastState = null; this.mode = null;
+    el('replay-event').hidden = true;
+    el('motion-status').textContent = 'Collector disconnected · no current activity';
+  }
+}
+const motion = new NetworkMotion();
 function resetSwitch(){['grants','allowed','dropped'].forEach(id=>el(id).textContent='—');['h1','h2'].forEach(id=>{el(id).dataset.state='unknown';el(id).querySelector('em').textContent='Unknown';});el('policy').textContent='Policy unknown';el('rules').replaceChildren();el('listeners').textContent='';}
 function render(s){const recorded=s.mode==='recorded';el('mode').textContent=recorded?'RECORDED EVIDENCE':s.switch_ok?'LIVE · CONNECTED':'LIVE · UNAVAILABLE';el('mode').dataset.tone=recorded?'recorded':s.switch_ok?'live':'unknown';el('connection').textContent=`Sample read ${new Date(s.sampled_at).toLocaleTimeString()}`;el('notice').textContent=recorded?`Recorded files · not the running VM. Flow, log and CSV sources are independent.`:s.errors.join(' ');resetSwitch();
  if(s.switch_ok){const grants=s.rules.filter(r=>r.kind==='allow'),deny=s.rules.some(r=>r.kind==='deny');el('grants').textContent=new Set(grants.map(r=>r.source)).size;el('allowed').textContent=grants.reduce((n,r)=>n+r.packets,0).toLocaleString();el('dropped').textContent=s.rules.filter(r=>r.kind==='deny').reduce((n,r)=>n+r.packets,0).toLocaleString();el('policy').textContent=deny?'Service deny rule present':'Service deny rule missing';['h1','h2'].forEach((id,i)=>{const allow=grants.some(r=>r.source===`10.0.0.${i+1}`);el(id).dataset.state=allow?'allow':deny?'deny':'unknown';el(id).querySelector('em').textContent=allow?'Allow rule observed':deny?'Deny / no grant':'Unknown policy';});s.rules.forEach(r=>row(el('rules'),[r.kind==='allow'?'200 · ALLOW':'100 · DROP',r.source||'Other sources',r.packets,r.remaining_s===null?'No hard timeout':`${r.remaining_s.toFixed(1)} s`]));if(!s.rules.length)row(el('rules'),['No recognized service rules','—','—','—']);}
  if(s.listeners)el('listeners').textContent=`Root-namespace listeners: OpenFlow 6653 ${s.listeners['6653']?'present':'absent'} · control 9999 ${s.listeners['9999']?'present':'absent'}. Listener presence is not a health check.`;
  el('event-status').textContent=s.events_status==='file read; historical events, not current sessions'?`${s.events.length} recent entries from the selected log`:s.events_status;el('events').replaceChildren();s.events.forEach(e=>{const n=document.createElement('div');n.className='event';n.append(text('time',e.time.replace(/,\d+$/,'')),text('strong',({LOGIN_SUCCESS:'Login accepted',LOGIN_FAILURE:'Login rejected',IP_LOCKOUT:'IP temporarily locked',IP_LOCKOUT_EXPIRED:'Lockout expired',ACCESS_UPDATED:'Access updated',ACCESS_UPDATE_UNCONFIRMED:'Access update unconfirmed'}[e.event]||e.event)),text('p',[e.source,e.reason,e.remaining_sessions!==undefined?`${e.remaining_sessions} remaining sessions`:null,e.count!==undefined?`failure ${e.count}`:null].filter(Boolean).join(' · ')));el('events').append(n);});if(!s.events.length)el('events').append(text('p','No recognized events in the selected log tail.'));
- el('measurement-status').textContent=[s.performance_file,s.performance_status].filter(Boolean).join(' · ');el('measurements').replaceChildren();el('bars').replaceChildren();if(s.performance){s.performance.metrics.forEach(m=>row(el('measurements'),[`${m.mode} / ${m.metric}`,m.n,m.mean.toFixed(4),m.median.toFixed(4)]));const ms=s.performance.metrics.filter(m=>m.metric==='service_rtt_ms'),max=Math.max(...ms.map(m=>m.median),0.001);ms.forEach(m=>{const r=document.createElement('div');r.className='bar-row';r.append(text('span',m.mode==='dynamic'?'Dynamic access':'Static baseline'));const track=document.createElement('div'),fill=document.createElement('div');track.className='track';fill.className=`fill ${m.mode==='static'?'static':''}`;fill.style.width=`${100*m.median/max}%`;track.append(fill);r.append(track,text('span',`${m.median.toFixed(2)} ms`));el('bars').append(r);});}}
-async function poll(){try{const r=await fetch('/api/state',{cache:'no-store',signal:AbortSignal.timeout(10000)});if(!r.ok)throw Error('Collector response failed');render(await r.json());}catch(e){resetSwitch();el('mode').textContent='DISCONNECTED';el('mode').dataset.tone='unknown';el('connection').textContent='No current sample';el('notice').textContent='Collector unavailable. Switch status is unknown; any events or measurements still shown are stale.';}finally{setTimeout(poll,2000);}}poll();
+ el('measurement-status').textContent=[s.performance_file,s.performance_status].filter(Boolean).join(' · ');el('measurements').replaceChildren();el('bars').replaceChildren();if(s.performance){s.performance.metrics.forEach(m=>row(el('measurements'),[`${m.mode} / ${m.metric}`,m.n,m.mean.toFixed(4),m.median.toFixed(4)]));const ms=s.performance.metrics.filter(m=>m.metric==='service_rtt_ms'),max=Math.max(...ms.map(m=>m.median),0.001);ms.forEach(m=>{const r=document.createElement('div');r.className='bar-row';r.append(text('span',m.mode==='dynamic'?'Dynamic access':'Static baseline'));const track=document.createElement('div'),fill=document.createElement('div');track.className='track';fill.className=`fill ${m.mode==='static'?'static':''}`;fill.style.width=`${100*m.median/max}%`;track.append(fill);r.append(track,text('span',`${m.median.toFixed(2)} ms`));el('bars').append(r);});}motion.observe(s);}
+async function poll(){try{const r=await fetch('/api/state',{cache:'no-store',signal:AbortSignal.timeout(10000)});if(!r.ok)throw Error('Collector response failed');render(await r.json());}catch(e){motion.disconnect();resetSwitch();el('mode').textContent='DISCONNECTED';el('mode').dataset.tone='unknown';el('connection').textContent='No current sample';el('notice').textContent='Collector unavailable. Switch status is unknown; any events or measurements still shown are stale.';}finally{setTimeout(poll,2000);}}poll();
 </script></body></html>
