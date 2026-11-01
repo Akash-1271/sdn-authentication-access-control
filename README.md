@@ -92,6 +92,12 @@ HMAC authenticates control requests but does not encrypt them. This trusted lab 
 
 The project covers TCP authentication, concurrency, sessions/timeouts, dynamic SDN policies, logs, unauthorized-access tests, robustness and baseline evaluation. [RESULTS.md](RESULTS.md) maps requirements to evidence. Extended regression/live tooling is retained under [verification/](verification/README.md).
 
+## Latest verification and optional live view
+
+The [1 November Ubuntu verification](verification/UBUNTU-20261101.md) passed 27 compact tests, 75 original regression tests, 81 real Mininet checkpoints and the updated automated demonstration. Its [new 20+20 measurement batch](data/validation-20261101/PERFORMANCE.md) is separate from the retained chart above. The application runtime is unchanged; an optional verification helper now accounts for an aged grant during controller-outage tests.
+
+The optional [network observatory](LIVE_DASHBOARD.md) displays actual switch grants/counters and recognized authentication-log events while the project runs. It is a read-only local viewer, separate from the 11 application modules. A recorded-file mode is clearly labelled and never presented as live VM data.
+
 ## What to explain
 
 Start with [one successful request](IMPLEMENTATION.md#one-successful-request), then the five central files, the priority 200/100/0 rules, and what changes on logout or expiry. The implementation guide includes exact message examples, important functions and short questions tied to the code.

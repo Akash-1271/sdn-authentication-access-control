@@ -32,6 +32,8 @@ jobs:
           sudo apt-get install -y mininet
       - name: Check source, measurements and documentation
         run: python -B verification/check_project.py
+      - name: Optional dashboard observer tests
+        run: python -B -m unittest discover -s tools/tests -v
       - name: Compact tests (skips fail this gate)
         run: |
           python -B - <<'PY'
