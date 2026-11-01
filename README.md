@@ -98,6 +98,8 @@ The [1 November Ubuntu verification](verification/UBUNTU-20261101.md) passed 27 
 
 The optional [network observatory](LIVE_DASHBOARD.md) displays actual switch grants/counters and recognized authentication-log events while the project runs. It is a read-only local viewer, separate from the 11 application modules. A recorded-file mode is clearly labelled and never presented as live VM data.
 
+Its dark interface can animate newly observed traffic-counter increases and authentication events. Moving dots illustrate sampled batches or logged request paths; they are not individual packet captures. Recorded data only animates through an explicitly labelled replay control. See [animated activity](LIVE_DASHBOARD.md#animated-activity-in-dark-mode).
+
 The [independent final review](verification/FINAL-REVIEW-20261101.md) checked application scope, evidence provenance and viewer design. Its two confirmed viewer interpretation issues were repaired without changing application code.
 
 ## What to explain

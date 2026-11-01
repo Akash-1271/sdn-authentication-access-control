@@ -91,6 +91,9 @@ class DashboardTests(unittest.TestCase):
             with urlopen(base + '/api/state') as response:
                 self.assertEqual(json.load(response)['mode'], 'recorded')
                 self.assertEqual(response.headers['Cache-Control'], 'no-store')
+            with urlopen(base + '/activity.js') as response:
+                self.assertIn('text/javascript', response.headers['Content-Type'])
+                self.assertIn(b'ActivityMonitor', response.read())
             for request, code in [(Request(base + '/../../auth_server.py'), 404),
                                   (Request(base + '/', headers={'Host': 'foreign.example'}), 403),
                                   (Request(base + '/api/state', data=b'{}'), 501)]:

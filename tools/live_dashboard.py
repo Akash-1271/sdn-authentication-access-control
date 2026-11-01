@@ -53,7 +53,7 @@ def parse_flows(text):
             timeout = int(values.get("hard_timeout", "0"))
             rules.append(dict(kind=kind, source=source, priority=priority,
                               packets=int(values["n_packets"]), bytes=int(values["n_bytes"]),
-                              hard_timeout=timeout,
+                              hard_timeout=timeout, duration_s=duration,
                               remaining_s=round(max(0, timeout - duration), 1) if timeout else None))
         except (ValueError, OverflowError) as exc:
             raise ValueError("Cannot interpret the protected-service policy safely") from exc
@@ -183,6 +183,9 @@ def handler_for(collector):
             elif path == "/":
                 content = (Path(__file__).with_name("dashboard.html")).read_bytes()
                 mime = "text/html; charset=utf-8"
+            elif path == "/activity.js":
+                content = (Path(__file__).with_name("activity.js")).read_bytes()
+                mime = "text/javascript; charset=utf-8"
             else:
                 self.send_error(404)
                 return
