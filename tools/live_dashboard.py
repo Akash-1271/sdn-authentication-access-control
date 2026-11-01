@@ -21,7 +21,7 @@ EVENTS = {"LOGIN_SUCCESS", "LOGIN_FAILURE", "IP_LOCKOUT", "IP_LOCKOUT_EXPIRED",
 
 
 def parse_flows(text):
-    """Only recognize this project's exact protected IPv4/TCP service rules."""
+    """Reject unfamiliar protected-service rules rather than infer broad access."""
     rules = []
     for line in text.splitlines():
         if " actions=" not in line:
@@ -37,21 +37,26 @@ def parse_flows(text):
                     and values.get("tp_dst") == "8080"):
                 continue
             source = values.get("nw_src")
-            # A prefix or another source must never be displayed as h1/h2 permission.
+            matches = [field.strip() for field in fields[fields.index("priority="):].split(",")]
+            expected = {f"priority={priority}", "tcp", "nw_dst=10.0.0.4", "tp_dst=8080"}
+            if source:
+                expected.add(f"nw_src={source}")
+            if values.get("table") != "0" or set(matches) != expected or len(matches) != len(expected):
+                raise ValueError("Unsupported service-rule table or match restrictions")
             if priority == 200 and source in {"10.0.0.1", "10.0.0.2"} and actions == "NORMAL":
                 kind = "allow"
             elif priority == 100 and not source and actions == "drop":
                 kind = "deny"
             else:
-                continue
+                raise ValueError("Unsupported protected-service policy")
             duration = float(values.get("duration", "0s").removesuffix("s"))
             timeout = int(values.get("hard_timeout", "0"))
             rules.append(dict(kind=kind, source=source, priority=priority,
                               packets=int(values["n_packets"]), bytes=int(values["n_bytes"]),
                               hard_timeout=timeout,
                               remaining_s=round(max(0, timeout - duration), 1) if timeout else None))
-        except (ValueError, OverflowError):
-            continue
+        except (ValueError, OverflowError) as exc:
+            raise ValueError("Cannot interpret the protected-service policy safely") from exc
     return rules
 
 
@@ -68,24 +73,27 @@ def read_tail(path):
 
 def parse_events(text):
     """Never send raw log lines, usernames, tokens or arbitrary fields to the page."""
+    ip = r"client_ip=(?P<source>10\.0\.0\.[12])"
+    patterns = {
+        "LOGIN_SUCCESS": ip,
+        "LOGIN_FAILURE": ip + r" count=(?P<count>\d{1,6})",
+        "IP_LOCKOUT": ip + r" seconds=(?P<seconds>\d{1,6})",
+        "IP_LOCKOUT_EXPIRED": ip,
+        "ACCESS_UPDATED": r"reason=(?P<reason>LOGOUT|EXPIRED|ALLOW_FAILED) " + ip + r" remaining_sessions=(?P<remaining_sessions>\d{1,6})",
+        "ACCESS_UPDATE_UNCONFIRMED": r"reason=(?P<reason>LOGOUT|EXPIRED|ALLOW_FAILED) " + ip,
+    }
     events = []
     for line in text.splitlines():
         match = re.match(r"^(\d{4}-\d\d-\d\d \d\d:\d\d:\d\d,\d+) (?:INFO|WARNING|ERROR) ([A-Z_]+)\b(.*)$", line)
         if not match or match[2] not in EVENTS:
             continue
-        fields = match[3]
-        ips = re.findall(r"(?:^|\s)client_ip=(10\.0\.0\.[12])(?=\s|$)", fields)
-        if not ips:
+        # The suffix is written by the server after any untrusted username.
+        suffix = re.search(r"(?:^|\s)" + patterns[match[2]] + r"$", match[3])
+        if not suffix:
             continue
-        # LOGIN_* includes an untrusted username before the server-written IP.
-        item = dict(time=match[1], event=match[2], source=ips[-1])
-        for field in ("count", "remaining_sessions", "seconds"):
-            value = re.search(r"(?:^|\s)" + field + r"=(\d{1,6})(?:\s|$)", fields)
-            if value:
-                item[field] = int(value[1])
-        reason = re.search(r"(?:^|\s)reason=(LOGOUT|EXPIRED)(?:\s|$)", fields)
-        if reason:
-            item["reason"] = reason[1]
+        item = dict(time=match[1], event=match[2])
+        for field, value in suffix.groupdict().items():
+            item[field] = int(value) if field in {"count", "remaining_sessions", "seconds"} else value
         events.append(item)
     return events[-18:][::-1]
 
@@ -133,10 +141,15 @@ class Collector:
                     addresses = [line.split()[3] for line in sockets.splitlines() if len(line.split()) >= 4]
                     state["listeners"] = {str(p): any(a.rsplit(":", 1)[-1] == str(p) for a in addresses)
                                           for p in (6653, 9999)}
+            try:
+                state["rules"] = parse_flows(flow_text) if ok else []
+            except ValueError:
+                ok = False
+                state["errors"].append("Unrecognized service rules: policy is unknown; compare the full OVS table.")
             state["switch_ok"] = ok
-            state["rules"] = parse_flows(flow_text) if ok else []
             if not ok:
-                state["errors"].append("Switch unavailable: check that s1 exists and this viewer can read OVS.")
+                if not state["errors"]:
+                    state["errors"].append("Switch unavailable: check that s1 exists and this viewer can read OVS.")
             if self.auth_log:
                 try:
                     state["events"] = parse_events(read_tail(self.auth_log))

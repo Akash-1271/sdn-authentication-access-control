@@ -54,3 +54,5 @@ python3 -B -m unittest discover -s tools/tests -v
 ```
 
 Seven observer tests cover rule interpretation, invalid rules, field sanitization, recorded-mode isolation, unavailable-switch handling, read-only commands and HTTP restrictions. They are separate from the original 27 compact and 75 regression tests. HTTP/recorded display can be checked on Windows; real OVS polling and live visual changes still require an Ubuntu run. No additional application feature or rubric credit is claimed for the viewer.
+
+The final independent review expanded those checks for forged metadata inside usernames and for restricted/nonzero-table service rules. The viewer reads event-specific server-written suffixes and marks unfamiliar protected-service policies unknown instead of inferring a host-wide grant or denial. Ordinary project flows and genuine logout, expiry and failed-allow cleanup events remain supported.

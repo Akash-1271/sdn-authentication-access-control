@@ -98,6 +98,8 @@ The [1 November Ubuntu verification](verification/UBUNTU-20261101.md) passed 27 
 
 The optional [network observatory](LIVE_DASHBOARD.md) displays actual switch grants/counters and recognized authentication-log events while the project runs. It is a read-only local viewer, separate from the 11 application modules. A recorded-file mode is clearly labelled and never presented as live VM data.
 
+The [independent final review](verification/FINAL-REVIEW-20261101.md) checked application scope, evidence provenance and viewer design. Its two confirmed viewer interpretation issues were repaired without changing application code.
+
 ## What to explain
 
 Start with [one successful request](IMPLEMENTATION.md#one-successful-request), then the five central files, the priority 200/100/0 rules, and what changes on logout or expiry. The implementation guide includes exact message examples, important functions and short questions tied to the code.
