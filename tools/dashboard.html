@@ -3,7 +3,7 @@
 <title>SDN Lab · Access control</title>
 <style>
 
-:root {color-scheme:light;--bg:#f5f7f8;--panel:#fff;--line:#e3e9ec;--muted:#6d7c87;--ink:#192b36;--green:#207f64;--amber:#8a672f;--red:#b15d64}
+:root {color-scheme:light;--bg:#f5f7f8;--panel:#fff;--line:#e3e9ec;--muted:#62727d;--ink:#192b36;--green:#207f64;--amber:#8a672f;--red:#a44d55}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,sans-serif}
 main{max-width:1160px;margin:auto;padding:38px 30px}
@@ -21,15 +21,15 @@ p{margin:5px 0;color:var(--muted)}
 .metric{padding:18px 21px}
 .panel{padding:23px;min-width:0}
 .value{font-size:32px;line-height:1.4;font-weight:600;letter-spacing:-1px;font-variant-numeric:tabular-nums;margin:5px 0}
-.label{font-size:11px;color:var(--muted)}
-.small{font-size:11px;color:var(--muted)}
+.label{font-size:12px;color:var(--muted)}
+.small{font-size:12px;color:var(--muted)}
 .columns{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:19px;align-items:start}
 .topology{display:grid;grid-template-columns:minmax(0,1fr) 112px minmax(0,1fr);gap:23px;align-items:center;margin:29px 0 24px}
 .hosts{display:grid;gap:15px;position:relative;z-index:1}
 .node{padding:15px 10px;text-align:center;border:1px solid var(--line);border-radius:8px;background:#fff;min-width:0}
 .node strong{display:block;font-size:12px;font-weight:650}
-.node span{font:10px/1.6 ui-monospace,Consolas,monospace;color:var(--muted);white-space:nowrap}
-.node em{display:block;font-size:10px;font-style:normal;color:var(--muted);margin-top:7px}
+.node span{font:11px/1.6 ui-monospace,Consolas,monospace;color:var(--muted);white-space:nowrap}
+.node em{display:block;font-size:11px;font-style:normal;color:var(--muted);margin-top:7px}
 .node[data-state=allow]{border-color:#b6d6c8;background:#f9fdfa}
 .node[data-state=allow] em{color:var(--green)}
 .node[data-state=deny] em{color:var(--red)}
@@ -41,21 +41,21 @@ p{margin:5px 0;color:var(--muted)}
 .switch:before{right:100%}.switch:after{left:100%}
 .legend{display:flex;gap:15px;flex-wrap:wrap;color:var(--muted);font-size:10px;border-top:1px solid var(--line);padding-top:13px}
 .legend b{font-weight:650;color:var(--green)}
-table{width:100%;border-collapse:collapse;font-size:11px}
+table{width:100%;border-collapse:collapse;font-size:12px}
 th,td{text-align:left;padding:12px 5px;border-bottom:1px solid var(--line);vertical-align:middle;font-variant-numeric:tabular-nums}
-th{font-weight:500;font-size:10px;color:var(--muted)}
+th{font-weight:500;font-size:11px;color:var(--muted)}
 tr:last-child td{border-bottom:0}
 .table-wrap{overflow-x:auto}
 #events{display:grid;gap:0;max-height:370px;overflow-y:auto;scrollbar-width:thin;padding-right:5px}
 .event{position:relative;padding:0 0 17px 17px;border-left:1px solid #e0e9e4;margin-left:4px}
 .event:before{content:'';position:absolute;left:-3px;top:5px;width:5px;height:5px;border-radius:50%;background:#7a9d8d}
-.event time{display:block;color:#8b989f;font-size:9px;margin-bottom:3px;font-variant-numeric:tabular-nums}
-.event strong{font-size:11px;font-weight:600}
-.event p{font-size:10px;margin:2px 0 0}
+.event time{display:block;color:var(--muted);font-size:10px;margin-bottom:3px;font-variant-numeric:tabular-nums}
+.event strong{font-size:12px;font-weight:600}
+.event p{font-size:11px;margin:2px 0 0;overflow-wrap:anywhere}
 #notice{background:#fffdf8;border:1px solid #e9e1d2;border-left:3px solid #c4a56c;border-radius:6px;padding:11px 14px;color:#816b47;margin:0 0 21px;font-size:11px}
 #notice:empty{display:none}
 .foot{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-top:20px;font-size:10px;color:#8c999f}
-#connection{font-size:10px;font-variant-numeric:tabular-nums;margin-top:7px}
+#connection{font-size:11px;font-variant-numeric:tabular-nums;margin-top:7px}
 .bars{display:grid;gap:18px;margin:20px 0 25px;max-width:620px}
 .bar-row{display:grid;grid-template-columns:110px minmax(0,1fr) 85px;gap:15px;align-items:center;font-size:11px}
 .track{height:7px;background:#edf1f3;border-radius:6px}
@@ -66,9 +66,10 @@ summary{font-size:11px;color:var(--muted);cursor:pointer;width:fit-content}
 summary:focus-visible{outline:3px solid #a3c8b9;outline-offset:5px}
 details p{font-size:11px;line-height:1.8;margin-top:12px}
 details .table-wrap{margin-top:13px}
-#measurement-status,#event-status{margin-top:0}
+#measurement-status,#event-status{margin-top:0;overflow-wrap:anywhere}
+@media(min-width:601px){header>div:last-child{text-align:right}}
 @media(max-width:980px){.columns{grid-template-columns:1fr}#events{grid-template-columns:1fr 1fr;column-gap:25px;max-height:245px}.topology{grid-template-columns:minmax(0,1fr) 130px minmax(0,1fr);gap:35px}.switch:before,.switch:after{width:36px}}
-@media(max-width:600px){main{padding:24px 17px}header{align-items:flex-start;flex-direction:column;gap:15px;margin-bottom:19px}h1{font-size:29px}.eyebrow{font-size:9px;letter-spacing:1.2px}.metrics{gap:7px;margin:17px 0}.metric{padding:12px 9px}.metric .label{font-size:10px;min-height:31px}.metric .small{display:none}.value{font-size:26px}.panel{padding:18px}.topology{grid-template-columns:1fr;gap:17px;margin:24px 0 20px}.hosts{grid-template-columns:1fr 1fr;gap:12px}.switch{width:140px;justify-self:center;padding:12px 7px}.switch:before,.switch:after{width:1px;height:18px;left:50%;right:auto}.switch:before{top:-18px}.switch:after{top:100%}.node{padding:12px 6px}.node span{font-size:9px}.legend{gap:10px;font-size:9px}#events{grid-template-columns:1fr;max-height:305px}.bar-row{grid-template-columns:83px minmax(0,1fr) 70px;gap:9px;font-size:10px}th,td{padding:11px 3px;font-size:10px}}
+@media(max-width:600px){main{padding:24px 17px}header{align-items:flex-start;flex-direction:column;gap:15px;margin-bottom:19px}h1{font-size:29px}.eyebrow{font-size:9px;letter-spacing:1.2px}.metrics{gap:8px;margin:17px 0}.metric{padding:14px 10px}.metric .label{font-size:11px;min-height:34px}.metric .small{display:none}.value{font-size:26px;overflow-wrap:anywhere}.panel{padding:18px}.topology{grid-template-columns:1fr;gap:17px;margin:24px 0 20px}.hosts{grid-template-columns:1fr 1fr;gap:12px}.switch{width:140px;justify-self:center;padding:12px 7px}.switch:before,.switch:after{width:1px;height:18px;left:50%;right:auto}.switch:before{top:-18px}.switch:after{top:100%}.node{padding:12px 6px}.node span{font-size:10px}.legend{gap:10px;font-size:10px}#events{grid-template-columns:1fr;max-height:305px}.bar-row{grid-template-columns:83px minmax(0,1fr) 70px;gap:9px;font-size:11px}th,td{padding:11px 4px;font-size:11px}}
 </style></head><body><main>
 <header><div><div class="eyebrow">SDN LAB / AUTHENTICATION & ACCESS CONTROL</div><h1>Access control</h1><p>Follow authentication decisions through the network.</p></div><div><span class="badge" id="mode">Connecting…</span><p class="small" id="connection" aria-live="polite">Waiting for the local collector</p></div></header>
 <div id="notice" role="status"></div>

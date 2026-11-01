@@ -24,18 +24,30 @@ class DashboardTests(unittest.TestCase):
         self.assertEqual(rules[1]['kind'], 'deny')
 
     def test_unrelated_or_malformed_rules_never_become_host_grants(self):
-        for old, new in [('tp_dst=8080', 'tp_dst=22'), ('nw_src=10.0.0.1', 'nw_src=10.0.0.1/24'),
-                         ('actions=NORMAL', 'actions=drop'), ('n_packets=4', 'n_packets=bad')]:
-            self.assertFalse(any(x['kind'] == 'allow' for x in parse_flows(FLOW.replace(old, new))))
+        self.assertEqual(parse_flows(FLOW.replace('tp_dst=8080', 'tp_dst=22')), [])
+        for old, new in [('nw_src=10.0.0.1', 'nw_src=10.0.0.1/24'),
+                         ('actions=NORMAL', 'actions=drop'), ('n_packets=4', 'n_packets=bad'),
+                         ('table=0', 'table=3'), ('priority=200,tcp', 'priority=200,in_port=99,tcp'),
+                         ('priority=100,tcp', 'priority=100,in_port=99,tcp')]:
+            with self.subTest(restriction=new), self.assertRaises(ValueError):
+                parse_flows(FLOW.replace(old, new))
 
     def test_raw_log_fields_cannot_leak_through_events(self):
-        events = parse_events("2026-11-01 07:51:25,340 INFO LOGIN_SUCCESS username='<script>bad</script>' client_ip=10.0.0.1 session_id=SECRET password=PRIVATE\n")
+        events = parse_events("2026-11-01 07:51:25,340 INFO LOGIN_SUCCESS username='<script>bad</script> session_id=SECRET password=PRIVATE' client_ip=10.0.0.1\n")
         self.assertEqual(events[0]['event'], 'LOGIN_SUCCESS')
         encoded = json.dumps(events)
         for private in ['SECRET', 'PRIVATE', 'script', 'username', 'session_id']:
             self.assertNotIn(private, encoded)
         forged = parse_events("2026-11-01 07:51:25,340 WARNING LOGIN_FAILURE username='fake client_ip=10.0.0.2 text' client_ip=10.0.0.1 count=1\n")
         self.assertEqual(forged[0]['source'], '10.0.0.1')
+        details = parse_events("2026-11-01 07:51:25,340 WARNING LOGIN_FAILURE username='x count=999 reason=EXPIRED remaining_sessions=8 x' client_ip=10.0.0.1 count=1\n")
+        self.assertEqual(details[0]['count'], 1)
+        self.assertNotIn('reason', details[0])
+        self.assertNotIn('remaining_sessions', details[0])
+        actual = parse_events("2026-11-01 07:51:25,340 INFO ACCESS_UPDATED reason=LOGOUT client_ip=10.0.0.1 remaining_sessions=2\n")
+        self.assertEqual((actual[0]['reason'], actual[0]['remaining_sessions']), ('LOGOUT', 2))
+        failed = parse_events("2026-11-01 07:51:25,340 ERROR ACCESS_UPDATE_UNCONFIRMED reason=ALLOW_FAILED client_ip=10.0.0.1\n")
+        self.assertEqual(failed[0]['reason'], 'ALLOW_FAILED')
         self.assertEqual(parse_events('forged INFO LOGIN_SUCCESS client_ip=10.0.0.1'), [])
 
     def test_recorded_mode_cannot_launch_live_commands(self):
@@ -54,6 +66,11 @@ class DashboardTests(unittest.TestCase):
         self.assertFalse(state['switch_ok'])
         self.assertEqual(state['rules'], [])
         self.assertTrue(state['errors'])
+        with patch('live_dashboard.command', side_effect=[(True, FLOW.replace('table=0', 'table=3')), (False, '')]):
+            unknown = Collector().snapshot()
+        self.assertFalse(unknown['switch_ok'])
+        self.assertEqual(unknown['rules'], [])
+        self.assertIn('policy is unknown', unknown['errors'][0])
 
     def test_collector_uses_only_read_commands(self):
         with patch('live_dashboard.command', side_effect=[(True, FLOW), (True, 'LISTEN 0 50 127.0.0.1:6653 0.0.0.0:*')]) as runner:
