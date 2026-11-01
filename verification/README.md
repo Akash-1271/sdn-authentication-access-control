@@ -17,6 +17,8 @@ Candidate runtime passed fresh Ubuntu validation; actual counts and limitations 
 
 ## Repository checks
 
+The [1 November Ubuntu follow-up](UBUNTU-20261101.md) records a verification-only outage scheduling repair: probes now account for the installed grant's age instead of assuming a fresh 60 seconds after controller stop. The original 75 regression tests are unchanged and passed again; the corrected real Mininet audit passed 81 checkpoints. Application runtime copies remain byte-identical.
+
 From the application root, `python3 -B verification/check_project.py` checks source hashes, exact toolkit runtime copies, archive integrity, the retained benchmark and local Markdown links. It uses only Python's standard library and does not create a topology.
 
 GitHub's `Project checks` workflow runs that checker and both isolated test suites on Ubuntu/Python 3.11, treating skipped tests as a failed gate. This is separate from privileged Mininet live validation. [SETUP.md](../SETUP.md) explains the two Python environments.
